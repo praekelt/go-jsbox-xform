@@ -1,0 +1,34 @@
+{
+  "name": "go-jsbox-xform",
+  "version": "0.0.0a",
+  "description": "A state for the vumi jsbox to process xforms.",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "./utils/test.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/praekelt/go-jsbox-xform.git"
+  },
+  "keywords": [
+    "vumi",
+    "sandbox",
+    "xform"
+  ],
+  "author": "Praekelt Foundation",
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/praekelt/go-jsbox-xform/issues"
+  },
+  "homepage": "https://github.com/praekelt/go-jsbox-xform",
+  "dependencies": {
+    "vumigo_v02": "~0.2",
+    "q": "~0.9",
+    "lodash": "~2.4.1",
+    "moment": "~2.5.1"
+  },
+  "devDependencies": {
+    "mocha": "~1.18",
+    "jshint": "~2.4.4"
+  }
+}
