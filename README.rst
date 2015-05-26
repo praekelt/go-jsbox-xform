@@ -1,4 +1,4 @@
-go-jsbox-xfrom
+go-jsbox-xform
 ==============
 
 |travis|_
