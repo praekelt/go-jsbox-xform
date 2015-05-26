@@ -31,7 +31,7 @@ describe('XFormState', function(){
 
         tester
             .setup.config.app({
-                name: 'xformState-tester'
+                name: 'xform-state-tester'
             })
             .setup(function(api){
                 fixtures().forEach(api.http.fixtures.add);
