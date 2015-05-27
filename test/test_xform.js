@@ -21,7 +21,10 @@ describe('XFormState', function(){
         tester = new AppTester(app);
 
         tester.data.opts = {};
-        _.defaults(tester.data.opts, {next:'states:end'});
+        _.defaults(tester.data.opts, {
+            next: 'states:end',
+            xforms_service_url: 'http://www.xforms.org'
+        });
 
         app.states.add('states:end', function(name) {
             return new EndState(name, {
@@ -182,9 +185,65 @@ describe('XFormState', function(){
                 return tester
                     .start()
                     .check(function(api) {
-                        assert.deepEqual(api.log.error[0], [[
+                        assert.deepEqual(api.log.error[0], [
                             'HTTP Error in getting XForm',
-                        ].join('')]);
+                        ]);
+                    })
+                    .run();
+            });
+        });
+    });
+
+    var xform_service_error_sources = [
+        {
+            error_msg: 'custom',
+            opts: {
+                'xform': test_xform,
+                'xforms_service_error_message': "Custom error message",
+            }
+        },
+        {
+            error_msg: 'default',
+            opts: {
+                'xform': test_xform,
+            }
+        }
+    ];
+
+    xform_service_error_sources.map(function(source){
+        describe('When connecting to the xforms service with ' +
+            source.error_msg + ' http error', function() {
+
+            beforeEach(function() {
+                app.states.add('states:test', function(name) {
+                    var opts = _.clone(tester.data.opts);
+                    _.defaults(opts, source.opts);
+                    opts.xform_service_url = 'http://www.badxforms.org';
+                    return new XFormState(name, opts);
+                });
+            });
+
+
+            it('should respond with the correct error message', function() {
+                var message = (
+                    source.opts.xforms_service_error_message ||
+                    'Error contacting the xforms service');
+                return tester
+                    .start()
+                    .check.interaction({
+                        state: 'states:test',
+                        reply: message,
+                    })
+                    .run();
+            });
+
+            it('should log the http error', function() {
+                return tester
+                    .start()
+                    .check(function(api) {
+                        assert.deepEqual(api.log.error[0], [
+                            'HTTP Error in connecting to the xforms service'
+                        ]);
                     })
                     .run();
             });
