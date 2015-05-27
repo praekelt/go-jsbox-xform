@@ -152,14 +152,22 @@ module.exports = function() {
         {
             request: {
                 method: "POST",
+                url: "http://www.badxforms.org/forms",
                 headers: {
-                    "Content-Type": "application/xml",
+                    "Content-Type": "application/xml"
                 },
-                data: "<?xml version='1.0' ?><test id=\"test\" version=\"201505270916\"><formhub><uuid /></formhub><name>Jon Snow</name><age>20</age><meta><instanceID /></meta></test>",
+                data: sample_xform,
             },
             response: {
-                code: "200",
+                code: "400",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                data: {
+                    "status": 400,
+                    "message": "An error occurred while attempting to save the provided XForm. Please ensure the XML you provided is well-formed and valid.",
+                },
             },
-        }
+        },
     ];
 };
