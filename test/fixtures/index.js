@@ -169,5 +169,31 @@ module.exports = function() {
                 },
             },
         },
+        {
+            request: {
+                method: "POST",
+                url: "http://www.testanswers.org",
+                headers: {
+                    "Content-Type": "application/xml"
+                },
+                data: "<?xml version='1.0' ?><test id=\"test\" version=\"201505270916\"><formhub><uuid /></formhub><name>Jon Snow</name><age>20</age><meta><instanceID /></meta></test>",
+            },
+            response: {
+                code: "200",
+            },
+        },
+        {
+            request: {
+                method: "POST",
+                url: "http://www.badtestanswers.org",
+                headers: {
+                    "Content-Type": "application/xml"
+                },
+                data: "<?xml version='1.0' ?><test id=\"test\" version=\"201505270916\"><formhub><uuid /></formhub><name>Jon Snow</name><age>20</age><meta><instanceID /></meta></test>",
+            },
+            response: {
+                code: "400",
+            },
+        },
     ];
 };
