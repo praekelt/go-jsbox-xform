@@ -302,4 +302,60 @@ describe('XFormState', function(){
                 .run();
         });
     });
+
+    var result_error_sources = [
+        {
+            error_msg: 'custom',
+            opts: {
+                'xform': test_xform,
+                'result_error_message': "Result custom error message",
+            }
+        },
+        {
+            error_msg: 'default',
+            opts: {
+                'xform': test_xform,
+            }
+        }
+    ];
+
+    result_error_sources.map(function(source){
+        describe('If the results url is down with ' +
+            source.error_msg + ' error message', function() {
+
+            beforeEach(function() {
+                app.states.add('states:test', function(name) {
+                    var opts = _.clone(tester.data.opts);
+                    _.defaults(opts, 'http://www.badtestAnswers.org');
+                    return new XFormState(name, opts);
+                });
+            });
+
+
+            it('should respond with the correct error message', function() {
+                var message = (
+                    source.opts.result_error_message ||
+                    'Error, cannot submit results');
+                return tester
+                    .inputs('Jon Snow', '20')
+                    .check.interaction({
+                        state: 'states:test',
+                        reply: message,
+                    })
+                    .run();
+            });
+
+            it('should log the HTTP error', function() {
+                return tester
+                    .start()
+                    .check(function(api) {
+                        assert.deepEqual(api.log.error[0], [
+                            'HTTP Error in connecting submitting results'
+                        ]);
+                    })
+                    .run();
+            });
+        });
+    });
+
 });
