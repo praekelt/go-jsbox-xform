@@ -93,7 +93,7 @@ describe('XFormState', function(){
                     .inputs('Jon Snow')
                     .check.interaction({
                         state: 'states:test',
-                        reply: 'What is your name?',
+                        reply: 'What is your age?',
                     })
                     .run();
             });
@@ -116,7 +116,7 @@ describe('XFormState', function(){
             name: 'external server with auth',
             error_msg: 'custom',
             opts: {
-                'xform_url': 'http://www.example.org/xform01',
+                'xform_url': 'https://www.example.org/xform01',
                 'xform_url_username': 'testuser',
                 'xform_url_password': 'testpass',
                 // This should be ignored since xform_url is present
@@ -128,7 +128,7 @@ describe('XFormState', function(){
             name: 'external server with auth',
             error_msg: 'default',
             opts: {
-                'xform_url': 'http://www.example.org/xform01',
+                'xform_url': 'https://www.example.org/xform01',
                 'xform_url_username': 'testuser',
                 'xform_url_password': 'testpass',
                 // This should be ignored since xform_url is present
@@ -254,7 +254,10 @@ describe('XFormState', function(){
         beforeEach(function() {
             app.states.add('states:test', function(name) {
                 var opts = _.clone(tester.data.opts);
-                _.defaults(opts, {contact_namespace: 'test_answers'});
+                _.defaults(opts, {
+                    contact_namespace: 'test_answers',
+                    xform: test_xform,
+                });
                 return new XFormState(name, opts);
             });
         });
@@ -279,7 +282,10 @@ describe('XFormState', function(){
         beforeEach(function() {
             app.states.add('states:test', function(name) {
                 var opts = _.clone(tester.data.opts);
-                _.defaults(opts, {results_url: 'http://www.testanswers.org'});
+                _.defaults(opts, {
+                    results_url: 'http://www.testanswers.org',
+                    xform: test_xform,
+                });
                 return new XFormState(name, opts);
             });
         });
@@ -309,12 +315,14 @@ describe('XFormState', function(){
             opts: {
                 'xform': test_xform,
                 'result_error_message': "Result custom error message",
+                'results_url': 'http://www.badtestanswers.org',
             }
         },
         {
             error_msg: 'default',
             opts: {
                 'xform': test_xform,
+                'results_url': 'http://www.badtestanswers.org',
             }
         }
     ];
@@ -326,7 +334,7 @@ describe('XFormState', function(){
             beforeEach(function() {
                 app.states.add('states:test', function(name) {
                     var opts = _.clone(tester.data.opts);
-                    _.defaults(opts, 'http://www.badtestAnswers.org');
+                    _.defaults(opts, source.opts);
                     return new XFormState(name, opts);
                 });
             });
