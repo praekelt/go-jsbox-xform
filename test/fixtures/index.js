@@ -105,12 +105,14 @@ module.exports = function() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                data: {
+                // TODO: Find out why it is necessary to stringify
+                // or if I'm doing something wrong
+                data: JSON.stringify({
                     "id":"cc46192a-8aba-43f3-9d4e-8b78486346dc",
                     "question":"What is your age?",
                     "status":200,
                     "message":"Question completed."
-                },
+                }),
             },
         },
         {
@@ -129,11 +131,11 @@ module.exports = function() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                data: {
+                data: JSON.stringify({
                     "message": "XForm completed.",
                     "status": 200,
                     "id": "cc46192a-8aba-43f3-9d4e-8b78486346dc"
-                },
+                }),
             },
         },
         {
