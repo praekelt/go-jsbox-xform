@@ -17,7 +17,7 @@ module.exports = function() {
         {
             request: {
                 method: "GET",
-                url: "http://www.example.org/xform00",
+                url: "https://www.example.org/xform00",
                 headers: {
                     Authorization: basic_auth('testuser', 'testpass')
                 },
@@ -40,7 +40,7 @@ module.exports = function() {
         {
             request: {
                 method: "GET",
-                url: "http://www.example.org/xform01",
+                url: "https://www.example.org/xform01",
                 headers: {
                     Authorization: basic_auth('testuser', 'testpass')
                 },
@@ -57,7 +57,7 @@ module.exports = function() {
                 headers: {
                     "Content-Type": "application/xml"
                 },
-                data: sample_xform,
+                body: sample_xform,
             },
             response: {
                 code: "201",
