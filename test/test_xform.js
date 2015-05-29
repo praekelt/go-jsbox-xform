@@ -218,7 +218,7 @@ describe('XFormState', function(){
                 app.states.add('states:test', function(name) {
                     var opts = _.clone(tester.data.opts);
                     _.defaults(opts, source.opts);
-                    opts.xform_service_url = 'http://www.badxforms.org';
+                    opts.xforms_service_url = 'http://www.badxforms.org';
                     return new XFormState(name, opts);
                 });
             });
@@ -241,9 +241,9 @@ describe('XFormState', function(){
                 return tester
                     .start()
                     .check(function(api) {
-                        assert.deepEqual(api.log.error[0], [
+                        assert.deepEqual(api.log.error[0][0], 
                             'HTTP Error in connecting to the xforms service'
-                        ]);
+                        );
                     })
                     .run();
             });
