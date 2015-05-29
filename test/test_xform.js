@@ -298,11 +298,10 @@ describe('XFormState', function(){
                     assert.equal(http_request.method, "POST");
                     assert.deepEqual(http_request.data, [
                         "<?xml version='1.0' ?>",
-                        "<test>",
-                        "   <name>Jon Snow</name>",
-                        "   <age>20</age>",
-                        "</test>"
-                        ].join('\n')
+                        "<test id=\"test\" version=\"201505270916\"><formhub>",
+                        "<uuid /></formhub><name>Jon Snow</name><age>20</age>",
+                        "<meta><instanceID /></meta></test>"
+                        ].join('')
                     );
                 })
                 .run();
