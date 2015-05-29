@@ -171,7 +171,7 @@ describe('XFormState', function(){
             it('should respond with the correct error message', function() {
                 error_msg = (
                     source.opts.xform_error_message || 
-                    'HTTP error in getting form from server');
+                    'Error in getting form from server');
                 return tester
                     .start()
                     .check.interaction({
@@ -185,9 +185,9 @@ describe('XFormState', function(){
                 return tester
                     .start()
                     .check(function(api) {
-                        assert.deepEqual(api.log.error[0], [
-                            'HTTP Error in getting XForm',
-                        ]);
+                        assert.equal(api.log.error[0][0], 
+                            'HTTP Error in getting XForm'
+                        );
                     })
                     .run();
             });
