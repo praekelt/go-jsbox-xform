@@ -355,11 +355,11 @@ describe('XFormState', function(){
 
             it('should log the HTTP error', function() {
                 return tester
-                    .start()
+                    .inputs('Jon Snow', '20')
                     .check(function(api) {
-                        assert.deepEqual(api.log.error[0], [
-                            'HTTP Error in connecting submitting results'
-                        ]);
+                        assert.deepEqual(api.log.error[0][0], 
+                            'HTTP Error in submitting results'
+                        );
                     })
                     .run();
             });
