@@ -267,11 +267,12 @@ describe('XFormState', function(){
                 .inputs('Jon Snow', '20')
                 .check(function(api){
                     var contact = api.contacts.store[0];
-                    assert.deepEqual(contact.extra.test_answers,
-                        {
-                            name: 'Jon Snow',
-                            age: '20',
-                        }
+                    assert.deepEqual(JSON.parse(contact.extra.test_answers), [
+                        "<?xml version='1.0' ?>",
+                        "<test id=\"test\" version=\"201505270916\"><formhub>",
+                        "<uuid /></formhub><name>Jon Snow</name><age>20</age>",
+                        "<meta><instanceID /></meta></test>"
+                        ].join('')
                     );
                 })
                 .run();
