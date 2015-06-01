@@ -16,6 +16,8 @@ describe('XForm example app', function() {
         return tester
             .setup.config.app({
                 name: 'test_xform_app',
+                xform_url: 'http://www.example.org/xform00',
+                results_url: 'http://www.testanswers.org',
             })
             .setup(function(api) {
                 fixtures().forEach(function(fixture) {
@@ -63,6 +65,7 @@ describe('XForm example app', function() {
             return tester
                 .inputs('Jon Snow', '20')
                 .check(function(api) {
+                    var http_request = api.http.requests.slice(-1)[0];
                     assert(http_request.data.indexOf('Jon Snow') !== -1);
                     assert(http_request.data.indexOf('20') !== -1);
                 })

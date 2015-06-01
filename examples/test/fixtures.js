@@ -15,7 +15,7 @@ module.exports = function() {
         {
             request: {
                 method: "POST",
-                url: "http://www.xforms.org/forms",
+                url: "prd-vumi-xforms.aws.prk-host.net/forms",
                 headers: {
                     "Content-Type": "application/xml"
                 },
@@ -36,7 +36,7 @@ module.exports = function() {
         {
             request: {
                 method: "GET",
-                url: "http://www.xforms.org/responses/cc46192a-8aba-43f3-9d4e-8b78486346dc/0",
+                url: "prd-vumi-xforms.aws.prk-host.net/responses/cc46192a-8aba-43f3-9d4e-8b78486346dc/0",
             },
             response: {
                 code: "200",
@@ -54,7 +54,7 @@ module.exports = function() {
         {
             request: {
                 method: "POST",
-                url: "http://www.xforms.org/responses/cc46192a-8aba-43f3-9d4e-8b78486346dc",
+                url: "prd-vumi-xforms.aws.prk-host.net/responses/cc46192a-8aba-43f3-9d4e-8b78486346dc",
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -80,7 +80,7 @@ module.exports = function() {
         {
             request: {
                 method: "POST",
-                url: "http://www.xforms.org/responses/cc46192a-8aba-43f3-9d4e-8b78486346dc",
+                url: "prd-vumi-xforms.aws.prk-host.net/responses/cc46192a-8aba-43f3-9d4e-8b78486346dc",
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -103,7 +103,7 @@ module.exports = function() {
         {
             request: {
                 method: "GET",
-                url: "http://www.xforms.org/answers/cc46192a-8aba-43f3-9d4e-8b78486346dc",
+                url: "prd-vumi-xforms.aws.prk-host.net/answers/cc46192a-8aba-43f3-9d4e-8b78486346dc",
             },
             response: {
                 code: "200",

@@ -12,9 +12,8 @@ var XFormApp = App.extend(function(self) {
     self.states.add('states:xform', function(name) {
         return new XFormState(name, {
             next: 'states:end',
-            xforms_service_url: 'http://www.xforms.org',
-            xform_url: 'http://www.example.org/xform00',
-            results_url: 'http://www.testanswers.org',
+            xform_url: self.im.config.xform_url,
+            results_url: self.im.config.results_url,
         });
     });
 
