@@ -66,8 +66,8 @@ describe('XForm example app', function() {
                 .inputs('Jon Snow', '20')
                 .check(function(api) {
                     var http_request = api.http.requests.slice(-1)[0];
-                    assert(http_request.data.indexOf('Jon Snow') !== -1);
-                    assert(http_request.data.indexOf('20') !== -1);
+                    assert.notEqual(http_request.data.indexOf('Jon Snow'), -1);
+                    assert.notEqual(http_request.data.indexOf('20'), -1);
                 })
                 .run();
         });
