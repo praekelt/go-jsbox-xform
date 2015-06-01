@@ -34,4 +34,40 @@ describe('XForm example app', function() {
                 .run();
         });
     });
+
+    describe('When the first question is answered', function() {
+        it('should ask the second question', function() {
+            return tester
+                .inputs('Jon Snow')
+                .check.interaction({
+                    state: 'states:xform',
+                    reply: 'What is your age?',
+                })
+                .run();
+        });
+    });
+
+    describe('When the second question is answered', function() {
+        it('should display the success message', function() {
+            return tester
+                .inputs('Jon Snow', '23')
+                .check.interaction({
+                    state: 'states:end',
+                    reply: 'Thank you for your submission!',
+                })
+                .run();
+        });
+
+        it('should submit the answers to the the server', function() {
+            return tester
+                .inputs('Jon Snow', '23')
+                .check(function(api) {
+                    http_request = api.http.requests.slice(-1)[0];
+                    assertNotEqual(http.request.data.indexOf('Jon Snow', -1));
+                    assertNotEqual(http.request.data.indexOf('23', -1));
+                })
+                .run();
+        });
+
+    });
 });

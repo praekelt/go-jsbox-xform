@@ -10,9 +10,16 @@ var XFormApp = App.extend(function(self) {
 
     self.states.add('states:xform', function(name) {
         return new XFormState(name, {
-
+            next: 'states:end',
         });
     });
+
+   self.states.add('states:end', function(name) {
+       return new EndState(name, {
+           text: 'Thank you for your submission!',
+           next: 'states:xform',
+       });
+   });
 });
 
 vumigo.interact(this.api, XFormApp);
