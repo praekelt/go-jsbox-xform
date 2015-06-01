@@ -1,6 +1,7 @@
 var vumigo = require('vumigo_v02');
 var xforms = require('../../lib');
 var XFormState = xforms.XFormState;
+var EndState = vumigo.states.EndState;
 
 var App = vumigo.App;
 
@@ -11,6 +12,9 @@ var XFormApp = App.extend(function(self) {
     self.states.add('states:xform', function(name) {
         return new XFormState(name, {
             next: 'states:end',
+            xforms_service_url: 'http://www.xforms.org',
+            xform_url: 'http://www.example.org/xform00',
+            results_url: 'http://www.testanswers.org',
         });
     });
 

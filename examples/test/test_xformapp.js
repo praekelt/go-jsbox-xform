@@ -3,6 +3,7 @@ var AppTester = vumigo.AppTester;
 var XFormApp = require('../lib/xformapp').XFormApp;
 var fixtures = require('./fixtures');
 
+var assert = require('assert');
 
 describe('XForm example app', function() {
     var app;
@@ -50,7 +51,7 @@ describe('XForm example app', function() {
     describe('When the second question is answered', function() {
         it('should display the success message', function() {
             return tester
-                .inputs('Jon Snow', '23')
+                .inputs('Jon Snow', '20')
                 .check.interaction({
                     state: 'states:end',
                     reply: 'Thank you for your submission!',
@@ -60,11 +61,10 @@ describe('XForm example app', function() {
 
         it('should submit the answers to the the server', function() {
             return tester
-                .inputs('Jon Snow', '23')
+                .inputs('Jon Snow', '20')
                 .check(function(api) {
-                    http_request = api.http.requests.slice(-1)[0];
-                    assertNotEqual(http.request.data.indexOf('Jon Snow', -1));
-                    assertNotEqual(http.request.data.indexOf('23', -1));
+                    assert(http_request.data.indexOf('Jon Snow') !== -1);
+                    assert(http_request.data.indexOf('20') !== -1);
                 })
                 .run();
         });
