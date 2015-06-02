@@ -1,55 +1,7 @@
 var sample_xform = require('./sample_xform');
-var vumigo = require('vumigo_v02');
-var basic_auth = vumigo.utils.basic_auth;
 
 module.exports = function() {
     return [
-        {
-            request: {
-                method: "GET",
-                url: "http://www.example.org/xform00",
-            },
-            response: {
-                code: "200",
-                data: sample_xform,
-            },
-        },
-        {
-            request: {
-                method: "GET",
-                url: "https://www.example.org/xform00",
-                headers: {
-                    Authorization: basic_auth('testuser', 'testpass')
-                },
-            },
-            response: {
-                code: "200",
-                data: sample_xform,
-            },
-        },
-        {
-            request: {
-                method: "GET",
-                url: "http://www.example.org/xform01",
-            },
-            response: {
-                code: "500",
-                data: 'Server error',
-            },
-        },
-        {
-            request: {
-                method: "GET",
-                url: "https://www.example.org/xform01",
-                headers: {
-                    Authorization: basic_auth('testuser', 'testpass')
-                },
-            },
-            response: {
-                code: "500",
-                data: 'Server error',
-            },
-        },
         {
             request: {
                 method: "POST",
