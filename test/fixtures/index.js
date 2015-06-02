@@ -1,55 +1,7 @@
 var sample_xform = require('./sample_xform');
-var vumigo = require('vumigo_v02');
-var basic_auth = vumigo.utils.basic_auth;
 
 module.exports = function() {
     return [
-        {
-            request: {
-                method: "GET",
-                url: "http://www.example.org/xform00",
-            },
-            response: {
-                code: "200",
-                data: sample_xform,
-            },
-        },
-        {
-            request: {
-                method: "GET",
-                url: "https://www.example.org/xform00",
-                headers: {
-                    Authorization: basic_auth('testuser', 'testpass')
-                },
-            },
-            response: {
-                code: "200",
-                data: sample_xform,
-            },
-        },
-        {
-            request: {
-                method: "GET",
-                url: "http://www.example.org/xform01",
-            },
-            response: {
-                code: "500",
-                data: 'Server error',
-            },
-        },
-        {
-            request: {
-                method: "GET",
-                url: "https://www.example.org/xform01",
-                headers: {
-                    Authorization: basic_auth('testuser', 'testpass')
-                },
-            },
-            response: {
-                code: "500",
-                data: 'Server error',
-            },
-        },
         {
             request: {
                 method: "POST",
@@ -169,32 +121,6 @@ module.exports = function() {
                     "status": 400,
                     "message": "An error occurred while attempting to save the provided XForm. Please ensure the XML you provided is well-formed and valid.",
                 },
-            },
-        },
-        {
-            request: {
-                method: "POST",
-                url: "http://www.testanswers.org",
-                headers: {
-                    "Content-Type": "application/xml"
-                },
-                data: "<?xml version='1.0' ?><test id=\"test\" version=\"201505270916\"><formhub><uuid /></formhub><name>Jon Snow</name><age>20</age><meta><instanceID /></meta></test>",
-            },
-            response: {
-                code: "200",
-            },
-        },
-        {
-            request: {
-                method: "POST",
-                url: "http://www.badtestanswers.org",
-                headers: {
-                    "Content-Type": "application/xml"
-                },
-                data: "<?xml version='1.0' ?><test id=\"test\" version=\"201505270916\"><formhub><uuid /></formhub><name>Jon Snow</name><age>20</age><meta><instanceID /></meta></test>",
-            },
-            response: {
-                code: "400",
             },
         },
     ];

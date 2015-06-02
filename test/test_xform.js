@@ -4,6 +4,7 @@ var App = vumigo.App;
 var AppTester = vumigo.AppTester;
 var EndState = vumigo.states.EndState;
 var assert = require('assert');
+var Q = require('q');
 
 var xform = require('../lib');
 var XFormState = xform.XFormState;
@@ -22,7 +23,14 @@ describe('XFormState', function(){
 
         tester.data.opts = {};
         _.defaults(tester.data.opts, {
-            next: 'states:end',
+            next: function(xform) {
+                return {
+                    name: 'states:end',
+                    creator_opts: {
+                        xform: xform,
+                    }
+                };
+            },
             xforms_service_url: 'http://www.xforms.org'
         });
 
@@ -43,25 +51,23 @@ describe('XFormState', function(){
 
     var sources = [
         {
-            name: 'external server with auth',
+            name: 'function',
             opts: {
-                'xform_url': 'http://www.example.org/xform00',
-                'xform_url_username': 'testuser',
-                'xform_url_password': 'testpass',
-                // This should be ignored since xform_url is present
-                'xform': 'test xforms data',
+                'xform': function() {
+                    return test_xform;
+                },
             }
         },
         {
-            name: 'external server without auth',
+            name: 'promise',
             opts: {
-                'xform_url': 'http://www.example.org/xform00',
-                // This should be ignored since xform_url is present
-                'xform': 'test xforms data',
+                'xform': Q().then(function() {
+                    return test_xform;
+                }),
             }
         },
         {
-            name: 'config specified xform',
+            name: 'string',
             opts: {
                 'xform': test_xform
             }
@@ -107,91 +113,26 @@ describe('XFormState', function(){
                     })
                     .run();
             });
-        });
 
-    });
-
-    var error_sources = [
-        {
-            name: 'external server with auth',
-            error_msg: 'custom',
-            opts: {
-                'xform_url': 'https://www.example.org/xform01',
-                'xform_url_username': 'testuser',
-                'xform_url_password': 'testpass',
-                // This should be ignored since xform_url is present
-                'xform': 'test xforms data',
-                'xform_error_message': 'custom xform http error message',
-            }
-        },
-        {
-            name: 'external server with auth',
-            error_msg: 'default',
-            opts: {
-                'xform_url': 'https://www.example.org/xform01',
-                'xform_url_username': 'testuser',
-                'xform_url_password': 'testpass',
-                // This should be ignored since xform_url is present
-                'xform': 'test xforms data',
-            }
-        },
-        {
-            name: 'external server without auth',
-            error_msg: 'custom',
-            opts: {
-                'xform_url': 'http://www.example.org/xform01',
-                // This should be ignored since xform_url is present
-                'xform': 'test xforms data',
-                'xform_error_message': 'custom_xform_http_error_message',
-            }
-        },
-        {
-            name: 'external server without auth',
-            error_msg: 'default',
-            opts: {
-                'xform_url': 'http://www.example.org/xform01',
-                // This should be ignored since xform_url is present
-                'xform': 'test xforms data',
-            }
-        },
-    ];
-
-    error_sources.map(function(source){
-        describe('When getting the xform from ' + source.name + 
-            ' with ' + source.error_msg + ' http error', function() {
-
-            beforeEach(function() {
-                app.states.add('states:test', function(name) {
-                    var opts = _.clone(tester.data.opts);
-                    _.defaults(opts, source.opts);
-                    return new XFormState(name, opts);
-                });
-            });
-
-            it('should respond with the correct error message', function() {
-                error_msg = (
-                    source.opts.xform_error_message || 
-                    'Error in getting form from server');
+            it('should send the completed xform to the next state', function() {
                 return tester
-                    .start()
+                    .inputs('Jon Snow', '20')
                     .check.interaction({
-                        state: 'states:test',
-                        reply: error_msg,
+                        state: 'states:end',
+                        reply: 'This is the end state.',
                     })
-                    .run();
-            });
-
-            it('should log the http error', function() {
-                return tester
-                    .start()
-                    .check(function(api) {
-                        assert.equal(api.log.error[0][0], 
-                            'HTTP Error in getting XForm'
-                        );
+                    .check.user.state(function(state) {
+                        xform = state.creator_opts.xform;
+                        assert.equal(xform, [
+                            '"<?xml version=\'1.0\' ?><test id=\\"test\\" ',
+                            'version=\\"201505270916\\"><formhub><uuid />',
+                            '</formhub><name>Jon Snow</name><age>20</age>',
+                            '<meta><instanceID /></meta></test>"'].join(''));
                     })
                     .run();
             });
         });
+
     });
 
     var xform_service_error_sources = [
@@ -243,122 +184,6 @@ describe('XFormState', function(){
                     .check(function(api) {
                         assert.deepEqual(api.log.error[0][0], 
                             'HTTP Error in connecting to the xforms service'
-                        );
-                    })
-                    .run();
-            });
-        });
-    });
-
-    describe('If the contact_namespace parameter is set', function() {
-        beforeEach(function() {
-            app.states.add('states:test', function(name) {
-                var opts = _.clone(tester.data.opts);
-                _.defaults(opts, {
-                    contact_namespace: 'test_answers',
-                    xform: test_xform,
-                });
-                return new XFormState(name, opts);
-            });
-        });
-
-        it('should save the responses to the contact under that namespace', function() {
-            return tester
-                .inputs('Jon Snow', '20')
-                .check(function(api){
-                    var contact = api.contacts.store[0];
-                    assert.deepEqual(JSON.parse(contact.extra.test_answers), [
-                        "<?xml version='1.0' ?>",
-                        "<test id=\"test\" version=\"201505270916\"><formhub>",
-                        "<uuid /></formhub><name>Jon Snow</name><age>20</age>",
-                        "<meta><instanceID /></meta></test>"
-                        ].join('')
-                    );
-                })
-                .run();
-        });
-    });
-
-    describe('If the results_url parameter is set', function() {
-        beforeEach(function() {
-            app.states.add('states:test', function(name) {
-                var opts = _.clone(tester.data.opts);
-                _.defaults(opts, {
-                    results_url: 'http://www.testanswers.org',
-                    xform: test_xform,
-                });
-                return new XFormState(name, opts);
-            });
-        });
-
-        it('should send the xform response to the specified URL', function() {
-            return tester
-                .inputs('Jon Snow', '20')
-                .check(function(api){
-                    http_request = api.http.requests.slice(-1)[0];
-                    assert.equal(http_request.method, "POST");
-                    assert.deepEqual(http_request.data, [
-                        "<?xml version='1.0' ?>",
-                        "<test id=\"test\" version=\"201505270916\"><formhub>",
-                        "<uuid /></formhub><name>Jon Snow</name><age>20</age>",
-                        "<meta><instanceID /></meta></test>"
-                        ].join('')
-                    );
-                })
-                .run();
-        });
-    });
-
-    var result_error_sources = [
-        {
-            error_msg: 'custom',
-            opts: {
-                'xform': test_xform,
-                'result_error_message': "Result custom error message",
-                'results_url': 'http://www.badtestanswers.org',
-            }
-        },
-        {
-            error_msg: 'default',
-            opts: {
-                'xform': test_xform,
-                'results_url': 'http://www.badtestanswers.org',
-            }
-        }
-    ];
-
-    result_error_sources.map(function(source){
-        describe('If the results url is down with ' +
-            source.error_msg + ' error message', function() {
-
-            beforeEach(function() {
-                app.states.add('states:test', function(name) {
-                    var opts = _.clone(tester.data.opts);
-                    _.defaults(opts, source.opts);
-                    return new XFormState(name, opts);
-                });
-            });
-
-
-            it('should respond with the correct error message', function() {
-                var message = (
-                    source.opts.result_error_message ||
-                    'Error, cannot submit results');
-                return tester
-                    .inputs('Jon Snow', '20')
-                    .check.interaction({
-                        state: 'states:test',
-                        reply: message,
-                    })
-                    .run();
-            });
-
-            it('should log the HTTP error', function() {
-                return tester
-                    .inputs('Jon Snow', '20')
-                    .check(function(api) {
-                        assert.deepEqual(api.log.error[0][0], 
-                            'HTTP Error in submitting results'
                         );
                     })
                     .run();
