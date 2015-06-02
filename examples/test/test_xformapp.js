@@ -13,11 +13,17 @@ describe('XForm example app', function() {
         app = new XFormApp();
         tester = new AppTester(app);
 
+        app.get_id = function() {
+            return 'foobar';
+        };
+
         return tester
             .setup.config.app({
                 name: 'test_xform_app',
                 xform_url: 'http://www.example.org/xform00',
                 results_url: 'http://www.testanswers.org',
+                results_username: 'testuser',
+                results_password: 'testpass',
             })
             .setup(function(api) {
                 fixtures().forEach(function(fixture) {
