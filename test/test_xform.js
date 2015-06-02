@@ -23,7 +23,14 @@ describe('XFormState', function(){
 
         tester.data.opts = {};
         _.defaults(tester.data.opts, {
-            next: 'states:end',
+            next: function(xform) {
+                return {
+                    name: 'states:end',
+                    creator_opts: {
+                        xform: xform,
+                    }
+                };
+            },
             xforms_service_url: 'http://www.xforms.org'
         });
 
@@ -106,6 +113,24 @@ describe('XFormState', function(){
                     })
                     .run();
             });
+
+            it('should send the completed xform to the next state', function() {
+                return tester
+                    .inputs('Jon Snow', '20')
+                    .check.interaction({
+                        state: 'states:end',
+                        reply: 'This is the end state.',
+                    })
+                    .check.user.state(function(state) {
+                        xform = state.creator_opts.xform;
+                        assert.equal(xform, [
+                            '"<?xml version=\'1.0\' ?><test id=\\"test\\" ',
+                            'version=\\"201505270916\\"><formhub><uuid />',
+                            '</formhub><name>Jon Snow</name><age>20</age>',
+                            '<meta><instanceID /></meta></test>"'].join(''));
+                    })
+                    .run();
+            });
         });
 
     });
@@ -159,122 +184,6 @@ describe('XFormState', function(){
                     .check(function(api) {
                         assert.deepEqual(api.log.error[0][0], 
                             'HTTP Error in connecting to the xforms service'
-                        );
-                    })
-                    .run();
-            });
-        });
-    });
-
-    describe('If the contact_namespace parameter is set', function() {
-        beforeEach(function() {
-            app.states.add('states:test', function(name) {
-                var opts = _.clone(tester.data.opts);
-                _.defaults(opts, {
-                    contact_namespace: 'test_answers',
-                    xform: test_xform,
-                });
-                return new XFormState(name, opts);
-            });
-        });
-
-        it('should save the responses to the contact under that namespace', function() {
-            return tester
-                .inputs('Jon Snow', '20')
-                .check(function(api){
-                    var contact = api.contacts.store[0];
-                    assert.deepEqual(JSON.parse(contact.extra.test_answers), [
-                        "<?xml version='1.0' ?>",
-                        "<test id=\"test\" version=\"201505270916\"><formhub>",
-                        "<uuid /></formhub><name>Jon Snow</name><age>20</age>",
-                        "<meta><instanceID /></meta></test>"
-                        ].join('')
-                    );
-                })
-                .run();
-        });
-    });
-
-    describe('If the results_url parameter is set', function() {
-        beforeEach(function() {
-            app.states.add('states:test', function(name) {
-                var opts = _.clone(tester.data.opts);
-                _.defaults(opts, {
-                    results_url: 'http://www.testanswers.org',
-                    xform: test_xform,
-                });
-                return new XFormState(name, opts);
-            });
-        });
-
-        it('should send the xform response to the specified URL', function() {
-            return tester
-                .inputs('Jon Snow', '20')
-                .check(function(api){
-                    http_request = api.http.requests.slice(-1)[0];
-                    assert.equal(http_request.method, "POST");
-                    assert.deepEqual(http_request.data, [
-                        "<?xml version='1.0' ?>",
-                        "<test id=\"test\" version=\"201505270916\"><formhub>",
-                        "<uuid /></formhub><name>Jon Snow</name><age>20</age>",
-                        "<meta><instanceID /></meta></test>"
-                        ].join('')
-                    );
-                })
-                .run();
-        });
-    });
-
-    var result_error_sources = [
-        {
-            error_msg: 'custom',
-            opts: {
-                'xform': test_xform,
-                'result_error_message': "Result custom error message",
-                'results_url': 'http://www.badtestanswers.org',
-            }
-        },
-        {
-            error_msg: 'default',
-            opts: {
-                'xform': test_xform,
-                'results_url': 'http://www.badtestanswers.org',
-            }
-        }
-    ];
-
-    result_error_sources.map(function(source){
-        describe('If the results url is down with ' +
-            source.error_msg + ' error message', function() {
-
-            beforeEach(function() {
-                app.states.add('states:test', function(name) {
-                    var opts = _.clone(tester.data.opts);
-                    _.defaults(opts, source.opts);
-                    return new XFormState(name, opts);
-                });
-            });
-
-
-            it('should respond with the correct error message', function() {
-                var message = (
-                    source.opts.result_error_message ||
-                    'Error, cannot submit results');
-                return tester
-                    .inputs('Jon Snow', '20')
-                    .check.interaction({
-                        state: 'states:test',
-                        reply: message,
-                    })
-                    .run();
-            });
-
-            it('should log the HTTP error', function() {
-                return tester
-                    .inputs('Jon Snow', '20')
-                    .check(function(api) {
-                        assert.deepEqual(api.log.error[0][0], 
-                            'HTTP Error in submitting results'
                         );
                     })
                     .run();
