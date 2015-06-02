@@ -1,4 +1,6 @@
 var sample_xform = require('../../test/fixtures/sample_xform');
+var vumigo = require('vumigo_v02');
+var basic_auth = vumigo.utils.basic_auth;
 
 module.exports = function() {
     return [
@@ -127,13 +129,23 @@ module.exports = function() {
                 method: "POST",
                 url: "http://www.testanswers.org",
                 headers: {
-                    "Content-Type": "application/xml"
+                    "Expect": "100-continue",
+                    "Content-Type": "multipart/form-data; boundary=foobar",
+                    "Authorization": [basic_auth('testuser', 'testpass')]
                 },
-                data: "<?xml version='1.0' ?><test id=\"test\" version=\"201505270916\"><formhub><uuid /></formhub><name>Jon Snow</name><age>20</age><meta><instanceID /></meta></test>",
+                data: [
+                    '--foobar',
+                    'Content-Disposition: form-data; name="xml_submission_file"',
+                    'Content-Type: application/xml',
+                    '',
+                    '"<?xml version=\'1.0\' ?><test id=\\"test\\" version=\\"201505270916\\"><formhub><uuid /></formhub><name>Jon Snow</name><age>20</age><meta><instanceID /></meta></test>"',
+                    '',
+                    '--foobar--',
+                    ].join('\n'),
             },
             response: {
                 code: "200",
-            },
+            }
         },
     ];
 };
