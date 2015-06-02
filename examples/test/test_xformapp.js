@@ -26,6 +26,25 @@ describe('XForm example app', function() {
             });
     });
 
+    describe('When there is an error getting the xform', function() {
+        beforeEach(function() {
+            return tester.setup.config.app({
+                name: 'test_xform_app',
+                xform_url: 'http://www.example.org/badxform',
+            });
+        });
+
+        it('should log the error message', function() {
+            return tester
+                .start()
+                .check(function(api) {
+                    log = api.log.error[0];
+                    assert.equal(log[0], 'HTTP error in getting xform');
+                })
+                .run();
+        });
+    });
+
     describe('When the user starts a session', function() {
         it('should ask them the first question', function() {
             return tester
