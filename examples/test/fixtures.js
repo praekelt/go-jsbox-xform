@@ -14,12 +14,21 @@ module.exports = function() {
         },
         {
             request: {
+                method: "GET",
+                url: "http://www.example.org/badxform",
+            },
+            response: {
+                code: "500",
+            },
+        },
+        {
+            request: {
                 method: "POST",
                 url: "prd-vumi-xforms.aws.prk-host.net/forms",
                 headers: {
                     "Content-Type": "application/xml"
                 },
-                body: sample_xform,
+                body: JSON.stringify(sample_xform),
             },
             response: {
                 code: "201",
