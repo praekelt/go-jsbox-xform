@@ -4,6 +4,7 @@ var App = vumigo.App;
 var AppTester = vumigo.AppTester;
 var EndState = vumigo.states.EndState;
 var assert = require('assert');
+var Q = require('q');
 
 var xform = require('../lib');
 var XFormState = xform.XFormState;
@@ -43,25 +44,23 @@ describe('XFormState', function(){
 
     var sources = [
         {
-            name: 'external server with auth',
+            name: 'function',
             opts: {
-                'xform_url': 'http://www.example.org/xform00',
-                'xform_url_username': 'testuser',
-                'xform_url_password': 'testpass',
-                // This should be ignored since xform_url is present
-                'xform': 'test xforms data',
+                'xform': function() {
+                    return test_xform;
+                },
             }
         },
         {
-            name: 'external server without auth',
+            name: 'promise',
             opts: {
-                'xform_url': 'http://www.example.org/xform00',
-                // This should be ignored since xform_url is present
-                'xform': 'test xforms data',
+                'xform': Q().then(function() {
+                    return test_xform;
+                }),
             }
         },
         {
-            name: 'config specified xform',
+            name: 'string',
             opts: {
                 'xform': test_xform
             }
@@ -109,89 +108,6 @@ describe('XFormState', function(){
             });
         });
 
-    });
-
-    var error_sources = [
-        {
-            name: 'external server with auth',
-            error_msg: 'custom',
-            opts: {
-                'xform_url': 'https://www.example.org/xform01',
-                'xform_url_username': 'testuser',
-                'xform_url_password': 'testpass',
-                // This should be ignored since xform_url is present
-                'xform': 'test xforms data',
-                'xform_error_message': 'custom xform http error message',
-            }
-        },
-        {
-            name: 'external server with auth',
-            error_msg: 'default',
-            opts: {
-                'xform_url': 'https://www.example.org/xform01',
-                'xform_url_username': 'testuser',
-                'xform_url_password': 'testpass',
-                // This should be ignored since xform_url is present
-                'xform': 'test xforms data',
-            }
-        },
-        {
-            name: 'external server without auth',
-            error_msg: 'custom',
-            opts: {
-                'xform_url': 'http://www.example.org/xform01',
-                // This should be ignored since xform_url is present
-                'xform': 'test xforms data',
-                'xform_error_message': 'custom_xform_http_error_message',
-            }
-        },
-        {
-            name: 'external server without auth',
-            error_msg: 'default',
-            opts: {
-                'xform_url': 'http://www.example.org/xform01',
-                // This should be ignored since xform_url is present
-                'xform': 'test xforms data',
-            }
-        },
-    ];
-
-    error_sources.map(function(source){
-        describe('When getting the xform from ' + source.name + 
-            ' with ' + source.error_msg + ' http error', function() {
-
-            beforeEach(function() {
-                app.states.add('states:test', function(name) {
-                    var opts = _.clone(tester.data.opts);
-                    _.defaults(opts, source.opts);
-                    return new XFormState(name, opts);
-                });
-            });
-
-            it('should respond with the correct error message', function() {
-                error_msg = (
-                    source.opts.xform_error_message || 
-                    'Error in getting form from server');
-                return tester
-                    .start()
-                    .check.interaction({
-                        state: 'states:test',
-                        reply: error_msg,
-                    })
-                    .run();
-            });
-
-            it('should log the http error', function() {
-                return tester
-                    .start()
-                    .check(function(api) {
-                        assert.equal(api.log.error[0][0], 
-                            'HTTP Error in getting XForm'
-                        );
-                    })
-                    .run();
-            });
-        });
     });
 
     var xform_service_error_sources = [
