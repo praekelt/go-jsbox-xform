@@ -8,6 +8,7 @@ var Q = require('q');
 
 var xform = require('../lib');
 var XFormState = xform.XFormState;
+var XFormStateError = xform.XFormStateError;
 
 var fixtures = require('./fixtures');
 var test_xform = require('./fixtures/sample_xform');
@@ -187,6 +188,19 @@ describe('XFormState', function(){
                         );
                     })
                     .run();
+            });
+        });
+    });
+
+    describe('When creating an XFormState without opts.xform', function() {
+        it('should throw an error', function() {
+            assert.throws(function() {
+                return new XFormState('foobar', {});
+            }, function(err) {
+               return (
+                   (err instanceof XFormStateError) && 
+                   (/opts\.xform must be defined for XFormState/.test(err))
+                   );
             });
         });
     });
