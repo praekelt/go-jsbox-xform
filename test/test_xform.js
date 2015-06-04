@@ -191,4 +191,12 @@ describe('XFormState', function(){
         });
     });
 
+    describe('When creating an XFormState without opts.xform', function() {
+        it('should throw an error', function() {
+            assert.throws(function() {
+                return new XFormState('foobar', {});
+            }, /opts\.xform must be defined for XFormState/);
+        });
+    });
+
 });
