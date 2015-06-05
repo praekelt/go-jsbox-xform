@@ -28,14 +28,14 @@ module.exports = function() {
                 method: "POST",
                 url: "prd-vumi-xforms.aws.prk-host.net/forms",
                 headers: {
-                    "Content-Type": "application/xml"
+                    "Content-Type": ["application/xml"]
                 },
                 body: JSON.stringify(sample_xform),
             },
             response: {
                 code: "201",
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": ["application/json"],
                 },
                 data: {
                     "message": "Created XForm.",
@@ -52,7 +52,7 @@ module.exports = function() {
             response: {
                 code: "200",
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": ["application/json"],
                 },
                 data: {
                     "message": "Question retrieved successfully.",
@@ -67,7 +67,7 @@ module.exports = function() {
                 method: "POST",
                 url: "prd-vumi-xforms.aws.prk-host.net/responses/cc46192a-8aba-43f3-9d4e-8b78486346dc",
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": ["application/json"],
                 },
                 data: {
                     answer: "Jon Snow",
@@ -76,16 +76,14 @@ module.exports = function() {
             response: {
                 code: "200",
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": ["application/json"],
                 },
-                // TODO: Find out why it is necessary to stringify
-                // or if I'm doing something wrong
-                data: JSON.stringify({
+                data: {
                     "id":"cc46192a-8aba-43f3-9d4e-8b78486346dc",
                     "question":"What is your age?",
                     "status":200,
                     "message":"Question completed."
-                }),
+                },
             },
         },
         {
@@ -93,7 +91,7 @@ module.exports = function() {
                 method: "POST",
                 url: "prd-vumi-xforms.aws.prk-host.net/responses/cc46192a-8aba-43f3-9d4e-8b78486346dc",
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": ["application/json"],
                 },
                 data: {
                     answer: "20",
@@ -102,7 +100,7 @@ module.exports = function() {
             response: {
                 code: "200",
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": ["application/json"],
                 },
                 data: JSON.stringify({
                     "message": "XForm completed.",
@@ -119,7 +117,7 @@ module.exports = function() {
             response: {
                 code: "200",
                 headers: {
-                    "Content-Type": "application/xml",
+                    "Content-Type": ["application/xml"],
                 },
                 data: "<?xml version='1.0' ?><test id=\"test\" version=\"201505270916\"><formhub><uuid /></formhub><name>Jon Snow</name><age>20</age><meta><instanceID /></meta></test>",
             },
@@ -129,8 +127,8 @@ module.exports = function() {
                 method: "POST",
                 url: "http://www.testanswers.org",
                 headers: {
-                    "Expect": "100-continue",
-                    "Content-Type": "multipart/form-data; boundary=foobar",
+                    "Expect": ["100-continue"],
+                    "Content-Type": ["multipart/form-data; boundary=foobar"],
                     "Authorization": [basic_auth('testuser', 'testpass')]
                 },
                 data: [
