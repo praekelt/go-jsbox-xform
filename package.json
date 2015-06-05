@@ -1,6 +1,6 @@
 {
   "name": "go-jsbox-xform",
-  "version": "0.0.0a",
+  "version": "0.0.1",
   "description": "A state for the vumi jsbox to process xforms.",
   "main": "lib/index.js",
   "scripts": {
