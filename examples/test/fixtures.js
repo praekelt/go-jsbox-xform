@@ -34,9 +34,6 @@ module.exports = function() {
             },
             response: {
                 code: "201",
-                headers: {
-                    "Content-Type": ["application/json"],
-                },
                 data: {
                     "message": "Created XForm.",
                     "status": 201,
@@ -51,9 +48,6 @@ module.exports = function() {
             },
             response: {
                 code: "200",
-                headers: {
-                    "Content-Type": ["application/json"],
-                },
                 data: {
                     "message": "Question retrieved successfully.",
                     "status": 200,
@@ -75,9 +69,6 @@ module.exports = function() {
             },
             response: {
                 code: "200",
-                headers: {
-                    "Content-Type": ["application/json"],
-                },
                 data: {
                     "id":"cc46192a-8aba-43f3-9d4e-8b78486346dc",
                     "question":"What is your age?",
@@ -99,9 +90,6 @@ module.exports = function() {
             },
             response: {
                 code: "200",
-                headers: {
-                    "Content-Type": ["application/json"],
-                },
                 data: JSON.stringify({
                     "message": "XForm completed.",
                     "status": 200,
@@ -116,9 +104,6 @@ module.exports = function() {
             },
             response: {
                 code: "200",
-                headers: {
-                    "Content-Type": ["application/xml"],
-                },
                 data: "<?xml version='1.0' ?><test id=\"test\" version=\"201505270916\"><formhub><uuid /></formhub><name>Jon Snow</name><age>20</age><meta><instanceID /></meta></test>",
             },
         },
